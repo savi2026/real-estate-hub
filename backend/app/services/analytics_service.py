@@ -1,0 +1,40 @@
+from sqlalchemy import text
+from sqlalchemy.orm import Session
+
+
+def _to_float(v):
+    return float(v) if v is not None else None
+
+
+def get_locality_analytics(db: Session):
+    query = text("""
+        SELECT
+            m.locality, m.total_properties, m.avg_area_sqft, m.avg_price,
+            m.avg_price_per_sqft, m.min_price, m.max_price,
+            o.opportunity_score
+        FROM locality_market_analysis m
+        LEFT JOIN locality_opportunity_score o ON o.locality = m.locality
+        ORDER BY m.locality
+    """)
+    rows = db.execute(query).mappings().all()
+
+    results = []
+    for r in rows:
+        d = dict(r)
+        for key in ["avg_area_sqft", "avg_price", "avg_price_per_sqft", "min_price", "max_price", "opportunity_score"]:
+            d[key] = _to_float(d[key])
+        results.append(d)
+    return results
+
+
+def get_property_type_analytics(db: Session):
+    query = text("SELECT * FROM property_type_analysis ORDER BY total_properties DESC")
+    rows = db.execute(query).mappings().all()
+
+    results = []
+    for r in rows:
+        d = dict(r)
+        for key in ["avg_area_sqft", "avg_price", "avg_price_per_sqft", "min_price", "max_price"]:
+            d[key] = _to_float(d[key])
+        results.append(d)
+    return results
