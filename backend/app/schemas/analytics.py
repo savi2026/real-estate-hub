@@ -21,3 +21,11 @@ class PropertyTypeAnalytics(BaseModel):
     avg_price_per_sqft: Optional[float] = None
     min_price: Optional[float] = None
     max_price: Optional[float] = None
+
+class ListingTrendPoint(BaseModel):
+    month: str
+    count: int
+
+class SplitItem(BaseModel):
+    label: str
+    count: int

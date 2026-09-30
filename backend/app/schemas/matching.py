@@ -31,7 +31,7 @@ class MatchRequest(BaseModel):
     max_area: Optional[float] = Field(default=None, ge=0, le=1_000_000)
 
     max_budget: float = Field(..., gt=0, le=1_000_000_000)
-
+    min_budget: Optional[float] = Field(default=None, ge=0, le=1_000_000_000)
     preferred_locality: Optional[str] = Field(default=None, max_length=100)
     strict_locality: bool = Field(default=True)
 
@@ -47,6 +47,8 @@ class MatchRequest(BaseModel):
         if self.min_area is not None and self.max_area is not None:
             if self.min_area > self.max_area:
                 raise ValueError("min_area cannot be greater than max_area")
+                if self.min_budget is not None and self.min_budget > self.max_budget:
+                    raise ValueError("min_budget cannot be greater than max_budget")
         return self
 
 

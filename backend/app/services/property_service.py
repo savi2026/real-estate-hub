@@ -2,7 +2,6 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 from app.schemas.property import PropertySearchRequest
 
-# Columns we trust to expose — whitelist approach, never build SQL from raw user text
 LIST_COLUMNS = """
     property_id, locality, property_type, land_type,
     area_sqft, asking_price_inr, price_per_sqft_inr
@@ -18,7 +17,7 @@ DETAIL_COLUMNS = """
 
 
 def get_property_by_id(db: Session, property_id: str):
-    query = text(f"SELECT {DETAIL_COLUMNS} FROM properties WHERE property_id = :pid")
+    query = text(f"SELECT {DETAIL_COLUMNS} FROM properties WHERE property_id = :pid AND status = 'active'")
     row = db.execute(query, {"pid": property_id}).mappings().first()
     return dict(row) if row else None
 
@@ -26,19 +25,15 @@ def get_property_by_id(db: Session, property_id: str):
 def list_properties(db: Session, page: int = 1, page_size: int = 20):
     offset = (page - 1) * page_size
     rows = db.execute(
-        text(f"SELECT {LIST_COLUMNS} FROM properties ORDER BY property_id LIMIT :limit OFFSET :offset"),
+        text(f"SELECT {LIST_COLUMNS} FROM properties WHERE status = 'active' ORDER BY property_id LIMIT :limit OFFSET :offset"),
         {"limit": page_size, "offset": offset},
     ).mappings().all()
-    total = db.execute(text("SELECT COUNT(*) FROM properties")).scalar()
+    total = db.execute(text("SELECT COUNT(*) FROM properties WHERE status = 'active'")).scalar()
     return [dict(r) for r in rows], total
 
 
 def search_properties(db: Session, filters: PropertySearchRequest):
-    """
-    Builds a parameterized query safely — every user value goes through
-    a bind parameter, never string-concatenated into SQL.
-    """
-    conditions = []
+    conditions = ["status = 'active'"]
     params = {}
 
     if filters.property_type:
@@ -69,11 +64,10 @@ def search_properties(db: Session, filters: PropertySearchRequest):
         conditions.append("asking_price_inr <= :max_price")
         params["max_price"] = filters.max_price
 
-    where_clause = f"WHERE {' AND '.join(conditions)}" if conditions else ""
+    where_clause = f"WHERE {' AND '.join(conditions)}"
     offset = (filters.page - 1) * filters.page_size
 
-    count_query = text(f"SELECT COUNT(*) FROM properties {where_clause}")
-    total = db.execute(count_query, params).scalar()
+    total = db.execute(text(f"SELECT COUNT(*) FROM properties {where_clause}"), params).scalar()
 
     data_query = text(
         f"SELECT {LIST_COLUMNS} FROM properties {where_clause} "

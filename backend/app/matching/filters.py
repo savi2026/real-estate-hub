@@ -10,11 +10,14 @@ CANDIDATE_COLUMNS = """
 
 
 def get_candidates(db: Session, req: MatchRequest):
-    conditions = ["property_type = :property_type", "asking_price_inr <= :max_budget"]
+    conditions = ["status = 'active'", "property_type = :property_type", "asking_price_inr <= :max_budget"]
     params = {
         "property_type": req.property_type.value,
         "max_budget": req.max_budget,
     }
+    if req.min_budget is not None:
+        conditions.append("asking_price_inr >= :min_budget")
+        params["min_budget"] = req.min_budget
 
     if req.land_type:
         conditions.append("land_type = :land_type")
