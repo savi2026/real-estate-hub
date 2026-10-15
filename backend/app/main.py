@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
-from app.routes import health, properties, matching, analytics, admin, auth, images, nlp
+from app.routes import health, properties, matching, analytics, admin, auth, images, nlp, enquiries, saved
 
 app = FastAPI(title="Nagpur Real Estate Brokerage API")
 
@@ -21,3 +21,5 @@ app.include_router(admin.router, prefix="/api")
 app.include_router(auth.router, prefix="/api")
 app.include_router(images.router, prefix="/api")
 app.include_router(nlp.router, prefix="/api")
+app.include_router(enquiries.router, prefix="/api")
+app.include_router(saved.router, prefix="/api")

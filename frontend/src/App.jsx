@@ -24,6 +24,7 @@ import Register from "./pages/Register";
 import AdminLogin from "./pages/AdminLogin";
 import AdminTeam from "./pages/AdminTeam";
 import AdminAllProperties from "./pages/AdminAllProperties";
+import AdminEnquiries from "./pages/AdminEnquiries";
 
 function RootGate() {
   const { session, loading } = useAuth();
@@ -68,6 +69,7 @@ export default function App() {
               <Route path="/admin/login" element={<AdminLogin />} />           
               <Route path="/admin/team" element={<AdminRoute><AdminTeam /></AdminRoute>} />
               <Route path="/admin/properties" element={<AdminRoute><AdminAllProperties /></AdminRoute>} />            
+              <Route path="/admin/enquiries" element={<AdminRoute><AdminEnquiries /></AdminRoute>} />            
             </Routes>
           </BrowserRouter>
         </CompareProvider>

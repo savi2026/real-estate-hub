@@ -76,4 +76,12 @@ export const api = {
   adminDashboardSummary: () => request("/admin/summary", {}, true),
   adminListTeam: () => request("/admin/team", {}, true),
   adminPromoteByEmail: (email) => request("/admin/team/promote", { method: "POST", body: JSON.stringify({ email }) }, true),
+  createEnquiry: (property_id, message) => request("/enquiries", { method: "POST", body: JSON.stringify({ property_id, message }) }, true),
+  myEnquiryStatus: (property_id) => request(`/enquiries/status?property_id=${encodeURIComponent(property_id)}`, {}, true),
+  myEnquiries: () => request("/enquiries/mine", {}, true),
+  adminListEnquiries: (status) => request(`/admin/enquiries${status ? `?status=${status}` : ""}`, {}, true),
+  adminUpdateEnquiryStatus: (id, status) =>
+    request(`/admin/enquiries/${encodeURIComponent(id)}/status`, { method: "PATCH", body: JSON.stringify({ status }) }, true),
+  listSaved: () => request("/saved", {}, true),
+  toggleSaved: (propertyId) => request(`/saved/${encodeURIComponent(propertyId)}/toggle`, { method: "POST" }, true),
 };

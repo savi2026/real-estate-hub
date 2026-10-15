@@ -12,6 +12,7 @@ import { LoadingState, ErrorState } from "../components/StatusStates";
 import { formatINR, formatArea, getDisplayName } from "../lib/format";
 import PropertyMap from "../components/PropertyMap";
 import PropertyImage from "../components/PropertyImage";
+import ContactButton from "../components/ContactButton";
 
 function Field({ label, value }) {
   if (value === null || value === undefined || value === "") return null;
@@ -187,7 +188,7 @@ export default function PropertyDetails() {
               <InfoChip icon={CalendarDays} label="Listing date" value={property.listing_date} tone="slate" />
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-3 flex-wrap">
               <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}
                 onClick={() => toggle(property.property_id)}
                 disabled={!isComparing && ids.length >= 3}
@@ -205,6 +206,7 @@ export default function PropertyDetails() {
               >
                 <Sparkles size={16} /> {isSaved ? "Saved" : "Save"}
               </button>
+              <ContactButton propertyId={property.property_id} />
             </div>
           </div>
         </>

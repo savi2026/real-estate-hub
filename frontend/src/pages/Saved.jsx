@@ -5,18 +5,19 @@ import PropertyCard from "../components/PropertyCard";
 import { LoadingState, ErrorState, EmptyState } from "../components/StatusStates";
 
 export default function Saved() {
-  const { ids } = useSaved();
+  const { ids, loaded } = useSaved();
   const [properties, setProperties] = useState(null);
   const [status, setStatus] = useState("loading");
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!loaded) return;
     if (ids.length === 0) { setStatus("done"); setProperties([]); return; }
     setStatus("loading");
     Promise.all(ids.map((id) => api.getProperty(id).catch(() => null)))
       .then((res) => { setProperties(res.filter(Boolean)); setStatus("done"); })
       .catch((err) => { setError(err.message); setStatus("error"); });
-  }, [ids]);
+  }, [ids, loaded]);
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">

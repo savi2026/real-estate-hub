@@ -5,6 +5,7 @@ const ITEMS = [
   { to: "/admin", label: "Dashboard" },
   { to: "/admin/add", label: "Add Property" },
   { to: "/admin/users", label: "User Details" },
+  { to: "/admin/enquiries", label: "Enquiries" },
   { to: "/admin/team", label: "Team" },
 ];
 
